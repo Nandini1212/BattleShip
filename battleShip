@@ -1,0 +1,73 @@
+// you can also use imports, for example:
+import java.util.*;
+
+
+// you can write to stdout for debugging purposes, e.g.
+// System.out.println("this is a debug message");
+
+class Solution {
+    public String solution(int N, String S, String T) {
+        // write your code in Java SE 8
+         
+        String[]splitShips = S.split(",");
+        Map<Integer, Set<String>> map = new HashMap<>();
+        for(int i = 0; i < splitShips.length; i++) {
+            Set<String> sets = new HashSet<>();
+            String[]splitCells = splitShips[i].split(" ");
+            sets = getCells(splitCells[0], splitCells[1]); 
+            map.put(i, sets);       
+        }
+        String[]splitTCells = T.split(" ");
+        Map<Integer, Integer> m = new HashMap<>();
+        Set<String> set1 = new HashSet<>();
+        for(int i = 0; i < splitTCells.length; i++) {
+            for (Integer key : map.keySet()) {
+                if(map.get(key).contains(splitTCells[i])) {
+                    if(!m.containsKey(key)) {
+                        m.put(key, 1);
+                    } else {
+                        m.put(key, m.get(key) + 1);
+                    }
+                    
+                } 
+            }
+        }
+        int sunken = 0;
+        int hit = 0;
+        for (Integer key : map.keySet()) {
+                if(m.containsKey(key) && map.get(key).size() == m.get(key)) {
+                    sunken++;
+                } else if(m.containsKey(key) && m.get(key) != 0){
+                    hit++;
+                }
+            }
+        return sunken + "," + hit;
+    }
+
+    public static Set<String> getCells(String leftTop, String rightBottom) {
+        int topRow = returnRow(leftTop);
+        int topCol = charToIntCol(returnCol(leftTop));
+        int bottomRow = returnRow(rightBottom);
+        int bottomCol = charToIntCol(returnCol(rightBottom));
+        Set<String> shipCells = new HashSet<>();
+        for(int i = topRow; i <= bottomRow; i++) {
+            for(int j = topCol; j <= bottomCol; j++) {
+                shipCells.add(String.valueOf(i) + intToCharCol(j));
+            }
+        }
+        return shipCells;
+    }
+    public static int returnRow(String cell) {
+        return Integer.parseInt(cell.substring(0, cell.length() - 1));
+    }
+    public static char returnCol(String cell) {
+        return cell.charAt(cell.length() - 1);
+    }
+    public static int charToIntCol(char c) {
+        return (int)c - 65;
+    }
+    public static char intToCharCol(int i) {
+        return (char)(65 + i);
+    }
+
+}
